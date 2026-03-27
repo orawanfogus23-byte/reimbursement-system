@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Reimbursement Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Anuphan:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Anuphan', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                            600: '#2563eb', 700: '#1d4ed8',
+                        },
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0) translateX(0)' },
+                            '50%': { transform: 'translateY(-20px) translateX(10px)' },
+                        },
+                        'shake': {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+                        },
+                        'fadeInUp': {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(-45deg, #f0f9ff, #e0f2fe, #dbeafe, #eff6ff);
+            background-size: 400% 400%;
+            animation: gradient-x 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+        .role-slider { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-group:focus-within label { color: #3b82f6; transform: translateY(-2px); }
+        .input-group input:focus { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .bg-blob {
+            position: absolute; z-index: -1; filter: blur(60px);
+            opacity: 0.4; border-radius: 50%;
+        }
+        .shaking { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .fields-wrap {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+        }
+        .fields-wrap.collapsed { max-height: 0 !important; opacity: 0; pointer-events: none; }
+    </style>
+</head>
+<body class="p-4 md:p-8 font-sans antialiased text-slate-800">
+
+    <div class="bg-blob bg-blue-400 w-64 h-64 top-10 left-10 animate-float" style="animation-delay: 0s;"></div>
+    <div class="bg-blob bg-indigo-300 w-96 h-96 bottom-10 right-10 animate-float" style="animation-delay: -2s;"></div>
+    <div class="bg-blob bg-sky-200 w-48 h-48 top-1/2 left-1/3 animate-float" style="animation-delay: -4s;"></div>
+
+    <main id="login-container" class="w-full max-w-[460px] animate-fade-in-up">
+        <div id="login-card" class="glass-card rounded-[2rem] p-8 md:p-10 relative overflow-hidden">
+
+            <!-- Header -->
+            <header class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-blue-600 to-sky-400 rounded-2xl shadow-lg shadow-blue-200 mb-4 transform hover:rotate-6 transition-transform">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <h1 class="font-display text-3xl font-bold tracking-tight text-slate-900 mb-1">ยินดีต้อนรับ</h1>
+                <p class="text-slate-500 font-medium">Smart Healthcare Reimbursement</p>
+                <!-- <p class="text-xs text-slate-400 mt-1">คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี</p> -->
+            </header>
+
+            <!-- Role Switcher -->
+            <div class="relative bg-slate-100/50 p-1.5 rounded-2xl mb-8 flex items-center">
+                <div id="role-slider" class="role-slider absolute top-1.5 left-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm z-0"></div>
+                <button type="button" onclick="switchRole('employee')" id="btn-employee"
+                    class="relative z-10 flex-1 py-2.5 text-sm font-semibold transition-colors text-blue-600">
+                    บุคลากร
+                </button>
+                <button type="button" onclick="switchRole('admin')" id="btn-admin"
+                    class="relative z-10 flex-1 py-2.5 text-sm font-semibold transition-colors text-slate-500">
+                    ผู้ดูแลระบบ
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-5" novalidate>
+                <div id="status-msg" class="hidden text-sm p-3.5 rounded-xl border animate-fade-in"></div>
+
+                <!-- EMPLOYEE FIELDS -->
+                <div id="fields-employee" class="fields-wrap space-y-5" style="max-height: 700px; opacity: 1;">
+                    <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">ชื่อ-นามสกุล</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </span>
+                            <input type="text" id="employee-name" placeholder="นาย/นาง/น.ส. ชื่อ นามสกุล"
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm">
+                        </div>
+                    </div>
+                    <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">อีเมล</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </span>
+                            <input type="email" id="employee-email" placeholder="your.email@gmail.com"
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm">
+                        </div>
+                    </div>
+                    <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">เลขบัตรประชาชน</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                            </span>
+                            <input type="text" id="citizen-id" maxlength="13" placeholder="xxxxxxxxxxxxxxx (13 หลัก)"
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm font-mono tracking-widest">
+                        </div>
+                        <p id="id-helper" class="mt-1.5 text-[11px] font-medium ml-1 text-slate-400">กรุณาระบุตัวเลขให้ครบ 13 หลัก</p>
+                    </div>
+                    <!-- Department (new field) -->
+                    <!-- <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">ภาควิชา / หน่วยงาน</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            </span>
+                            <input type="text" id="employee-dept" placeholder="เช่น อายุรกรรม, กุมารเวชศาสตร์..."
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm">
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- ADMIN FIELDS -->
+                <div id="fields-admin" class="fields-wrap space-y-5 collapsed" style="max-height: 0; opacity: 0;">
+                    <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">รหัสพนักงาน</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </span>
+                            <input type="text" id="admin-id" placeholder="ADMIN-XXXX"
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm font-mono">
+                        </div>
+                    </div>
+                    <div class="input-group group">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 transition-all">รหัสผ่าน</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </span>
+                            <input type="password" id="admin-password" placeholder="••••••••"
+                                class="w-full pl-12 pr-4 py-3.5 bg-white/70 border border-slate-200 rounded-2xl focus:border-blue-300 outline-none transition-all text-sm">
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-100 text-xs text-amber-700 font-medium">
+                        🔒 สำหรับเจ้าหน้าที่ฝ่ายการเงินและผู้ดูแลระบบเท่านั้น
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="btn-submit"
+                    class="relative w-full py-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-200/60 hover:shadow-xl hover:shadow-blue-300/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 overflow-hidden mt-6">
+                    <span id="btn-text">เข้าสู่ระบบ</span>
+                    <svg id="spinner" class="hidden absolute inset-0 m-auto w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <p class="text-center text-xs text-slate-400 mt-6">
+                ระบบเบิกค่าใช้จ่ายสุขภาพบุคลากร<br>
+            </p>
+        </div>
+    </main>
+
+    <script>
+        let currentRole = 'employee';
+
+        const loginCard      = document.getElementById('login-card');
+        const roleSlider     = document.getElementById('role-slider');
+        const btnEmployee    = document.getElementById('btn-employee');
+        const btnAdmin       = document.getElementById('btn-admin');
+        const fieldsEmp      = document.getElementById('fields-employee');
+        const fieldsAdm      = document.getElementById('fields-admin');
+        const citizenIdInput = document.getElementById('citizen-id');
+        const idHelper       = document.getElementById('id-helper');
+        const statusMsg      = document.getElementById('status-msg');
+        const btnSubmit      = document.getElementById('btn-submit');
+        const btnText        = document.getElementById('btn-text');
+        const spinner        = document.getElementById('spinner');
+
+        function switchRole(role) {
+            if (currentRole === role) return;
+            currentRole = role;
+            clearStatus();
+            if (role === 'employee') {
+                roleSlider.style.transform = 'translateX(0)';
+                btnEmployee.classList.replace('text-slate-500', 'text-blue-600');
+                btnAdmin.classList.replace('text-blue-600', 'text-slate-500');
+                fieldsEmp.style.maxHeight = '700px';
+                fieldsEmp.style.opacity   = '1';
+                fieldsEmp.classList.remove('collapsed');
+                fieldsAdm.style.maxHeight = '0';
+                fieldsAdm.style.opacity   = '0';
+                fieldsAdm.classList.add('collapsed');
+            } else {
+                const halfW = roleSlider.parentElement.offsetWidth / 2 - 6;
+                roleSlider.style.transform = `translateX(${halfW}px)`;
+                btnAdmin.classList.replace('text-slate-500', 'text-blue-600');
+                btnEmployee.classList.replace('text-blue-600', 'text-slate-500');
+                fieldsAdm.style.maxHeight = '400px';
+                fieldsAdm.style.opacity   = '1';
+                fieldsAdm.classList.remove('collapsed');
+                fieldsEmp.style.maxHeight = '0';
+                fieldsEmp.style.opacity   = '0';
+                fieldsEmp.classList.add('collapsed');
+            }
+        }
+
+        citizenIdInput.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/\D/g, '');
+            e.target.value = val;
+            if (val.length === 13) {
+                idHelper.innerText = '✓ เลขบัตรถูกต้อง';
+                idHelper.className = 'mt-1.5 text-[11px] font-medium ml-1 text-emerald-500';
+                citizenIdInput.classList.add('border-emerald-200');
+                citizenIdInput.classList.remove('border-rose-200');
+            } else if (val.length > 0) {
+                idHelper.innerText = `ต้องการอีก ${13 - val.length} หลัก`;
+                idHelper.className = 'mt-1.5 text-[11px] font-medium ml-1 text-slate-400';
+                citizenIdInput.classList.remove('border-emerald-200', 'border-rose-200');
+            } else {
+                idHelper.innerText = 'กรุณาระบุตัวเลขให้ครบ 13 หลัก';
+                idHelper.className = 'mt-1.5 text-[11px] font-medium ml-1 text-slate-400';
+            }
+        });
+
+        function setLoading(isLoading) {
+            btnSubmit.disabled = isLoading;
+            btnText.classList.toggle('invisible', isLoading);
+            spinner.classList.toggle('hidden', !isLoading);
+        }
+
+        function showStatus(msg, type) {
+            statusMsg.innerText = msg;
+            statusMsg.classList.remove('hidden', 'bg-rose-50', 'text-rose-600', 'border-rose-100',
+                                       'bg-emerald-50', 'text-emerald-600', 'border-emerald-100');
+            if (type === 'error') {
+                statusMsg.classList.add('bg-rose-50', 'text-rose-600', 'border-rose-100');
+                loginCard.classList.add('shaking');
+                setTimeout(() => loginCard.classList.remove('shaking'), 500);
+            } else {
+                statusMsg.classList.add('bg-emerald-50', 'text-emerald-600', 'border-emerald-100');
+            }
+        }
+
+        function clearStatus() { statusMsg.classList.add('hidden'); }
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            clearStatus();
+
+            if (currentRole === 'employee') {
+                const name  = document.getElementById('employee-name').value.trim();
+                const email = document.getElementById('employee-email').value.trim();
+                const id    = citizenIdInput.value.trim();
+                // const dept = document.getElementById('employee-dept').value.trim(); // 👈 ลบบรรทัดนี้ออกถ้าไม่ได้เปิดช่องกรอก
+
+                if (!name)  { showStatus('กรุณากรอกชื่อ-นามสกุล', 'error'); return; }
+                if (!email || !email.includes('@')) { showStatus('กรุณากรอกอีเมลให้ถูกต้อง', 'error'); return; }
+                if (id.length !== 13) {
+                    showStatus('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก', 'error');
+                    return;
+                }
+
+                setLoading(true);
+
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbzLqSs_EVwoUWbLB8Mvf9bOuMMMlpkQ04IT-Tid1_m5LkkuIcQ0kAI0cjhibWeTe9prWQ/exec';
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('name', name);
+                formData.append('citizenId', id);
+
+                fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: formData,
+                    mode: 'no-cors'
+                })
+                .then(() => {
+                    setLoading(false);
+                    localStorage.setItem('userData', JSON.stringify({
+                        name, email, citizenId: id, role: 'user'
+                    }));
+                    showStatus('✓ เข้าสู่ระบบสำเร็จ...', 'success');
+                    setTimeout(() => { window.location.href = 'Receipt_Request_Form.html'; }, 1200);
+                })
+                .catch(error => {
+                    setLoading(false);
+                    showStatus('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง', 'error');
+                    console.error('Error!', error.message);
+                });
+
+            } else {
+                const adminId  = document.getElementById('admin-id').value.trim();
+                const password = document.getElementById('admin-password').value;
+
+                if (!adminId)  { showStatus('กรุณากรอกรหัสพนักงาน', 'error'); return; }
+                if (!password) { showStatus('กรุณากรอกรหัสผ่าน', 'error'); return; }
+
+                setLoading(true);
+                setTimeout(() => {
+                    setLoading(false);
+                    // ✅ บันทึก admin session
+                    localStorage.setItem('adminData', JSON.stringify({
+                        adminId, role: 'admin', loginTime: new Date().toISOString()
+                    }));
+                    showStatus('✓ เข้าสู่ระบบสำเร็จ กำลังนำท่านไปยัง Dashboard...', 'success');
+                    btnSubmit.classList.replace('from-blue-600', 'from-emerald-500');
+                    btnSubmit.classList.replace('to-sky-500', 'to-teal-400');
+                    // ✅ URL ที่ถูกต้อง
+                    setTimeout(() => { window.location.href = 'Admin.html'; }, 1200);
+                }, 1200);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (currentRole === 'admin') {
+                const halfW = roleSlider.parentElement.offsetWidth / 2 - 6;
+                roleSlider.style.transform = `translateX(${halfW}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
